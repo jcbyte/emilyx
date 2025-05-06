@@ -2,7 +2,7 @@ let timestamp = null;
 
 export default async function (req, res) {
 	// If POST then set the timestamp
-	if (req.method !== "POST") {
+	if (req.method === "POST") {
 		// Extract the timestamp
 		const { timestamp: newTimestamp } = req.body;
 
@@ -16,7 +16,7 @@ export default async function (req, res) {
 	}
 
 	// If GET then retrieve the timestamp
-	if (req.method !== "GET") {
+	if (req.method === "GET") {
 		// Send the timestamp if it exists
 		if (timestamp) {
 			return res.status(200).json({ timestamp });
