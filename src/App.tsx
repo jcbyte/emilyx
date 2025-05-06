@@ -49,16 +49,18 @@ export default function App() {
 					<div className="absolute inset-0 flex items-center justify-center">
 						{/* Bottom padding to make the text "look" more central */}
 						<p className="text-fuchsia-50 font-bold text-xl pb-4">
-							{heartbeats && Math.floor(heartbeats).toLocaleString()}
+							{heartbeats && (heartbeats > 0 ? Math.floor(heartbeats).toLocaleString() : "We're Here!")}
 						</p>
 					</div>
 				</div>
 
 				<p className="text-lg text-pink-700">
 					{heartbeats
-						? `That's ${Math.floor(heartbeats / BPM / 60)} hours and ${Math.floor(
-								(heartbeats / BPM) % 60
-						  )} minutes from now x`
+						? heartbeats > 0
+							? `That's ${Math.floor(heartbeats / BPM / 60)} hours and ${Math.floor(
+									(heartbeats / BPM) % 60
+							  )} minutes from now x`
+							: "Every heartbeat was for this moment with you x"
 						: "Working it out for you x"}
 				</p>
 			</div>
