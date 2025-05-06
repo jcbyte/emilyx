@@ -5,19 +5,35 @@ import Heart from "./assets/heart.svg?react";
 const BPM = 70;
 
 export default function App() {
-	const [heartbeats, setHeartbeats] = useState(100000); // todo load initial
-	const [isBeating, setIsBeating] = useState(false);
+	const [heartbeats, setHeartbeats] = useState<number>(); // todo load initial
+	const [heartbeatsLoaded, setHeartbeatsLoaded] = useState<boolean>(false);
+
+	const [isBeating, setIsBeating] = useState<boolean>(false);
+
+	// Load timestamp
+	useEffect(() => {
+		fetch("/api/timestamp")
+			.then((res) => res.json())
+			.then(({ timestamp }) => {
+				let remaining = timestamp - Date.now();
+				let remainingHeartbeats = (remaining / 1000 / 60) * BPM;
+				setHeartbeats(remainingHeartbeats);
+				setHeartbeatsLoaded(true);
+			});
+	}, []);
 
 	// Heart beat animation effect
 	useEffect(() => {
-		const beatInterval = setInterval(() => {
-			setIsBeating(true);
-			setHeartbeats((prev) => prev - 1);
-			setTimeout(() => setIsBeating(false), 200);
-		}, (60 / BPM) * 1000);
+		if (heartbeatsLoaded) {
+			const beatInterval = setInterval(() => {
+				setIsBeating(true);
+				setHeartbeats((prev) => prev! - 1);
+				setTimeout(() => setIsBeating(false), 200);
+			}, (60 / BPM) * 1000);
 
-		return () => clearInterval(beatInterval);
-	}, []);
+			return () => clearInterval(beatInterval);
+		}
+	}, [heartbeatsLoaded]);
 
 	return (
 		<>
@@ -32,12 +48,18 @@ export default function App() {
 					/>
 					<div className="absolute inset-0 flex items-center justify-center">
 						{/* Bottom padding to make the text "look" more central */}
-						<p className="text-fuchsia-50 font-bold text-xl pb-4">{heartbeats.toLocaleString()}</p>
+						<p className="text-fuchsia-50 font-bold text-xl pb-4">
+							{heartbeats && Math.floor(heartbeats).toLocaleString()}
+						</p>
 					</div>
 				</div>
 
 				<p className="text-lg text-pink-700">
-					That's {Math.floor(heartbeats / BPM / 60)} hours and {Math.floor((heartbeats / BPM) % 60)} minutes from now x
+					{heartbeats
+						? `That's ${Math.floor(heartbeats / BPM / 60)} hours and ${Math.floor(
+								(heartbeats / BPM) % 60
+						  )} minutes from now x`
+						: "Working it out for you x"}
 				</p>
 			</div>
 		</>
