@@ -60,7 +60,7 @@ export default function App() {
 							? `That's ${Math.floor(heartbeats / BPM / 60)} hours and ${Math.floor(
 									(heartbeats / BPM) % 60
 							  )} minutes from now x`
-							: "Every heartbeat was for this moment with you x"
+							: "Every heartbeat was for this moment x"
 						: "Working it out for you x"}
 				</p>
 			</div>
