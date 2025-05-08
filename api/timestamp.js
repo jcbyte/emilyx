@@ -1,5 +1,5 @@
 // todo set timestamp through api
-const date = new Date(2025, 5 - 1, 7, 18 - 1, 0, 0);
+const date = new Date(2025, 5 - 1, 9, 9 - 1, 35, 0);
 let timestamp = date.getTime();
 
 export default async function (req, res) {
