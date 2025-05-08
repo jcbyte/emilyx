@@ -5,7 +5,7 @@ import Heart from "./assets/heart.svg?react";
 const BPM = 70;
 
 export default function App() {
-	const [heartbeats, setHeartbeats] = useState<number>(); // todo load initial
+	const [heartbeats, setHeartbeats] = useState<number>();
 	const [heartbeatsLoaded, setHeartbeatsLoaded] = useState<boolean>(false);
 
 	const [isBeating, setIsBeating] = useState<boolean>(false);
