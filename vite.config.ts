@@ -10,8 +10,8 @@ const manifest: Partial<ManifestOptions> = {
 	description: "For my love x",
 	start_url: "/",
 	display: "standalone",
-	background_color: "#fae8ff",
-	theme_color: "#fae8ff",
+	background_color: "#f48fb1",
+	theme_color: "rgba(0, 0, 0, 0)",
 	icons: [
 		{ src: "/favicon.ico", type: "image/x-icon", sizes: "16x16 32x32" },
 		{ src: "/icon/icon-192.png", type: "image/png", sizes: "192x192" },

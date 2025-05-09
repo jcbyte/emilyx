@@ -75,7 +75,7 @@ export default function App() {
 					<span className="text-lg text-pink-700 text-center">
 						{heartbeats
 							? heartbeats > 0
-								? `That's ${Math.floor(heartbeats / BPM / 60)} hours and ${Math.floor(
+								? `That's only ${Math.floor(heartbeats / BPM / 60)} hours and ${Math.floor(
 										(heartbeats / BPM) % 60
 								  )} minutes more!`
 								: "This moment was worth every beat"
