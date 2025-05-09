@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import Heart from "./assets/heart.svg?react";
+import { getTimestamp } from "./firebase/firestore";
 
 const BPM = 70;
 
@@ -12,14 +13,12 @@ export default function App() {
 
 	// Load timestamp
 	useEffect(() => {
-		fetch("/api/timestamp")
-			.then((res) => res.json())
-			.then(({ timestamp }) => {
-				let remaining = timestamp - Date.now();
-				let remainingHeartbeats = (remaining / 1000 / 60) * BPM;
-				setHeartbeats(remainingHeartbeats);
-				setHeartbeatsLoaded(true);
-			});
+		getTimestamp().then((timestamp) => {
+			let remaining = timestamp - Date.now();
+			let remainingHeartbeats = (remaining / 1000 / 60) * BPM;
+			setHeartbeats(remainingHeartbeats);
+			setHeartbeatsLoaded(true);
+		});
 	}, []);
 
 	// Heart beat animation effect
