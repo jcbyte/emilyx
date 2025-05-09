@@ -11,14 +11,32 @@ export default function App() {
 
 	const [isBeating, setIsBeating] = useState<boolean>(false);
 
+	async function loadHeartbeats() {
+		// Get timestamp from database
+		let timestamp = await getTimestamp();
+
+		// Calculate heartbeats remaining
+		let remaining = timestamp - Date.now();
+		let remainingHeartbeats = (remaining / 1000 / 60) * BPM;
+
+		setHeartbeats(remainingHeartbeats);
+		setHeartbeatsLoaded(true);
+	}
+
+	function handlePageFocus() {
+		// Reload timestamp when coming back to the page
+		loadHeartbeats();
+	}
+
 	// Load timestamp
 	useEffect(() => {
-		getTimestamp().then((timestamp) => {
-			let remaining = timestamp - Date.now();
-			let remainingHeartbeats = (remaining / 1000 / 60) * BPM;
-			setHeartbeats(remainingHeartbeats);
-			setHeartbeatsLoaded(true);
-		});
+		// Initially load timestamp
+		loadHeartbeats();
+
+		window.addEventListener("focus", handlePageFocus);
+		return () => {
+			window.removeEventListener("focus", handlePageFocus);
+		};
 	}, []);
 
 	// Heart beat animation effect
