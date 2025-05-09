@@ -54,8 +54,8 @@ export default function App() {
 
 	return (
 		<>
-			<div className="flex flex-col items-center justify-center gap-6 mt-24">
-				<h1 className="text-3xl font-bold text-pink-600 text-center">Heartbeats until I see you again!</h1>
+			<div className="flex flex-col items-center justify-center gap-6 pt-24 px-2">
+				<span className="text-3xl font-semibold text-pink-600 text-center">Counting heartbeats until I see you!</span>
 
 				<div className="relative">
 					<Heart
@@ -65,21 +65,24 @@ export default function App() {
 					/>
 					<div className="absolute inset-0 flex items-center justify-center">
 						{/* Bottom padding to make the text "look" more central */}
-						<p className="text-fuchsia-50 font-bold text-xl pb-4">
+						<span className="text-fuchsia-50 font-bold text-xl pb-4">
 							{heartbeats && (heartbeats > 0 ? Math.floor(heartbeats).toLocaleString() : "We're Here!")}
-						</p>
+						</span>
 					</div>
 				</div>
 
-				<p className="text-lg text-pink-700">
-					{heartbeats
-						? heartbeats > 0
-							? `That's ${Math.floor(heartbeats / BPM / 60)} hours and ${Math.floor(
-									(heartbeats / BPM) % 60
-							  )} minutes from now x`
-							: "Every heartbeat was for this moment x"
-						: "Working it out for you x"}
-				</p>
+				<div className="flex flex-col gap-2 justify-center items-center">
+					<span className="text-lg text-pink-700 text-center">
+						{heartbeats
+							? heartbeats > 0
+								? `That's ${Math.floor(heartbeats / BPM / 60)} hours and ${Math.floor(
+										(heartbeats / BPM) % 60
+								  )} minutes more!`
+								: "This moment was worth every beat"
+							: "Syncing our heartbeat..."}
+					</span>
+					<span className="text-sm text-pink-700">For Emily x</span>
+				</div>
 			</div>
 		</>
 	);
