@@ -9,9 +9,9 @@ const manifest: Partial<ManifestOptions> = {
 	short_name: "Emily's Countdown",
 	description: "For my love x",
 	start_url: "/",
-	display: "standalone",
+	display: "fullscreen",
 	background_color: "#f48faf",
-	theme_color: "#000000",
+	theme_color: "#f48faf",
 	icons: [
 		{ src: "/favicon.ico", type: "image/x-icon", sizes: "16x16 32x32" },
 		{ src: "/icon/icon-192.png", type: "image/png", sizes: "192x192" },
