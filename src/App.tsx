@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import Heart from "./assets/heart.svg?react";
+import AnimatedLimes from "./components/AnimatedLimes";
 import { getTimestamp } from "./firebase/firestore";
 
 const BPM = 70;
@@ -13,11 +14,11 @@ export default function App() {
 
 	async function loadHeartbeats() {
 		// Get timestamp from database
-		let timestamp = await getTimestamp();
+		const timestamp = await getTimestamp();
 
 		// Calculate heartbeats remaining
-		let remaining = timestamp - Date.now();
-		let remainingHeartbeats = (remaining / 1000 / 60) * BPM;
+		const remaining = timestamp - Date.now();
+		const remainingHeartbeats = (remaining / 1000 / 60) * BPM;
 
 		setHeartbeats(remainingHeartbeats);
 		setHeartbeatsLoaded(true);
@@ -84,6 +85,8 @@ export default function App() {
 					<span className="text-sm text-pink-700">For Emily x</span>
 				</div>
 			</div>
+
+			<AnimatedLimes />
 		</>
 	);
 }
