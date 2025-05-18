@@ -53,10 +53,29 @@ export default function App() {
 		}
 	}, [heartbeatsLoaded]);
 
+	function getTimeStr(heartbeats: number): string {
+		const hours = Math.floor(heartbeats / BPM / 60);
+		const minutes = Math.floor((heartbeats / BPM) % 60);
+
+		const hoursStr = hours <= 0 ? null : `${hours} hour${hours > 1 ? "s" : ""}`;
+		const minutesStr = minutes <= 0 ? null : `${minutes} minute${minutes > 1 ? "s" : ""}`;
+
+		// If time <= 1 minute
+		if (!hoursStr && !minutesStr) {
+			// If time <= 0
+			if (heartbeats <= 0) return "This moment was worth every beat";
+			return "That's less than a minute more!";
+		}
+
+		return `That's only ${hoursStr ?? ""}${hoursStr && minutesStr ? " and " : ""}${minutesStr ?? ""} more!`;
+	}
+
 	return (
 		<>
 			<div className="flex flex-col items-center justify-center gap-6 pt-24 px-2">
-				<span className="text-3xl font-semibold text-pink-600 text-center">Counting heartbeats until I see you!</span>
+				<span className="text-3xl font-semibold text-pink-600 text-center">
+					Counting heartbeats until we're together!
+				</span>
 
 				<div className="relative">
 					<Heart
@@ -74,13 +93,7 @@ export default function App() {
 
 				<div className="flex flex-col gap-2 justify-center items-center">
 					<span className="text-lg text-pink-700 text-center">
-						{heartbeats
-							? heartbeats > 0
-								? `That's only ${Math.floor(heartbeats / BPM / 60)} hours and ${Math.floor(
-										(heartbeats / BPM) % 60
-								  )} minutes more!`
-								: "This moment was worth every beat"
-							: "Syncing our heartbeat..."}
+						{heartbeats ? getTimeStr(heartbeats) : "Syncing our heartbeat..."}
 					</span>
 					<span className="text-sm text-pink-700">For Emily x</span>
 				</div>
