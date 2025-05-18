@@ -51,26 +51,17 @@ export default function AnimatedLime({
 		}[edge];
 	}
 
-	function getStyle(): React.CSSProperties {
-		return {
-			transitionDuration: `${transitionDuration}ms`,
-			width: SIZE,
-			height: SIZE,
-			...{
-				top: { left: offset },
-				bottom: { left: offset },
-				left: { top: offset },
-				right: { top: offset },
-			}[edge],
-		};
-	}
+	const style: React.CSSProperties = {
+		transitionDuration: `${transitionDuration}ms`,
+		width: SIZE,
+		height: SIZE,
+		...{
+			top: { left: offset },
+			bottom: { left: offset },
+			left: { top: offset },
+			right: { top: offset },
+		}[edge],
+	};
 
-	return (
-		<img
-			src={limeImg}
-			alt="Pixel Art Cat"
-			className={`fixed transition-all ease-in-out ${getClass()}`}
-			style={getStyle()}
-		/>
-	);
+	return <img src={limeImg} alt="Lime" className={`fixed transition-all ease-in-out ${getClass()}`} style={style} />;
 }
