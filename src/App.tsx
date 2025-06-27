@@ -1,27 +1,30 @@
 import { useEffect, useState } from "react";
 
+import { getNextEvent } from "./api";
 import Heart from "./assets/heart.svg?react";
 import AnimatedLimes from "./components/AnimatedLimes";
-import { getTimestamp } from "./firebase/firestore";
 
 const BPM = 70;
 
 export default function App() {
-	const [heartbeats, setHeartbeats] = useState<number>();
-	const [heartbeatsLoaded, setHeartbeatsLoaded] = useState<boolean>(false);
+	const [heartbeats, setHeartbeats] = useState<number>(0);
+	const [heartbeatState, setHeartbeatState] = useState<"loading" | "counting" | "none">("loading");
 
 	const [isBeating, setIsBeating] = useState<boolean>(false);
 
 	async function loadHeartbeats() {
-		// Get timestamp from database
-		const timestamp = await getTimestamp();
+		// Get start time of next event from calendar
+		const nextEvent = await getNextEvent();
 
-		// Calculate heartbeats remaining
-		const remaining = timestamp - Date.now();
-		const remainingHeartbeats = (remaining / 1000 / 60) * BPM;
-
-		setHeartbeats(remainingHeartbeats);
-		setHeartbeatsLoaded(true);
+		if (!nextEvent) {
+			setHeartbeatState("none");
+		} else {
+			// Calculate heartbeats remaining
+			const remaining = nextEvent.getTime() - Date.now();
+			const remainingHeartbeats = (remaining / 1000 / 60) * BPM;
+			setHeartbeats(remainingHeartbeats);
+			setHeartbeatState("counting");
+		}
 	}
 
 	function handlePageFocus() {
@@ -42,7 +45,7 @@ export default function App() {
 
 	// Heart beat animation effect
 	useEffect(() => {
-		if (heartbeatsLoaded) {
+		if (heartbeatState === "counting") {
 			const beatInterval = setInterval(() => {
 				setIsBeating(true);
 				setHeartbeats((prev) => prev! - 1);
@@ -51,7 +54,7 @@ export default function App() {
 
 			return () => clearInterval(beatInterval);
 		}
-	}, [heartbeatsLoaded]);
+	}, [heartbeatState]);
 
 	function getTimeStr(heartbeats: number): string {
 		const hours = Math.floor(heartbeats / BPM / 60);
@@ -86,14 +89,18 @@ export default function App() {
 					<div className="absolute inset-0 flex items-center justify-center">
 						{/* Bottom padding to make the text "look" more central */}
 						<span className="text-fuchsia-50 font-bold text-xl pb-4">
-							{heartbeats && (heartbeats > 0 ? Math.floor(heartbeats).toLocaleString() : "We're Here!")}
+							{heartbeatState === "counting" &&
+								(heartbeats > 0 ? Math.floor(heartbeats).toLocaleString() : "We're Here!")}
+							{heartbeatState === "none" && "Stunner"}
 						</span>
 					</div>
 				</div>
 
 				<div className="flex flex-col gap-2 justify-center items-center">
 					<span className="text-lg text-pink-700 text-center">
-						{heartbeats ? getTimeStr(heartbeats) : "Syncing our heartbeat..."}
+						{heartbeatState === "loading" && "Syncing our heartbeat..."}
+						{heartbeatState === "counting" && getTimeStr(heartbeats)}
+						{heartbeatState === "none" && "Nothing planned, but I'll see you soon love!"}
 					</span>
 					<span className="text-sm text-pink-700">For Emily x</span>
 				</div>
