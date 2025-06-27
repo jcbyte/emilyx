@@ -14,16 +14,17 @@ async function getAccessToken() {
 	const authUrl = authClient.generateAuthUrl({
 		accessType: "offline",
 		scope: ["https://www.googleapis.com/auth/calendar.readonly"],
+		prompt: "consent",
 	});
 
-	console.log("Authorize this app by visiting this url:", authUrl);
+	console.log(`Authorise by visiting this url: ${authUrl}`);
 
 	const rl = readline.createInterface({
 		input: process.stdin,
 		output: process.stdout,
 	});
 
-	rl.question("Enter the redirect URL: ", async (url) => {
+	rl.question("Paste the redirect URL here: ", async (url) => {
 		rl.close();
 
 		const inputUrl = new URL(url);
