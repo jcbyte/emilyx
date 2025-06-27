@@ -12,7 +12,7 @@ async function getAccessToken() {
 	});
 
 	const authUrl = authClient.generateAuthUrl({
-		accessType: "offline",
+		access_type: "offline",
 		scope: ["https://www.googleapis.com/auth/calendar.readonly"],
 		prompt: "consent",
 	});
