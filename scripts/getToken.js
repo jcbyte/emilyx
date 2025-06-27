@@ -8,7 +8,7 @@ async function getAccessToken() {
 	const authClient = new google.auth.OAuth2({
 		clientId: process.env.CLIENT_ID,
 		clientSecret: process.env.CLIENT_SECRET,
-		redirectUri: "http://localhost:3000",
+		redirectUri: process.env.CLIENT_REDIRECT,
 	});
 
 	const authUrl = authClient.generateAuthUrl({
@@ -37,7 +37,7 @@ async function getAccessToken() {
 		authClient.setCredentials(tokens);
 
 		console.log();
-		console.log("Token:", tokens);
+		console.log("Token:\n", JSON.stringify(tokens));
 	});
 }
 
