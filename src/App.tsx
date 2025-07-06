@@ -8,13 +8,17 @@ const BPM = 70;
 
 export default function App() {
 	const [heartbeats, setHeartbeats] = useState<number>(0);
-	const [heartbeatState, setHeartbeatState] = useState<"loading" | "counting" | "none">("loading");
+	const [heartbeatState, setHeartbeatState] = useState<"loading" | "counting" | "none" | "error">("loading");
 
 	const [isBeating, setIsBeating] = useState<boolean>(false);
 
 	async function loadHeartbeats() {
 		// Get start time of next event from calendar
 		const nextEvent = await getNextEvent();
+		if (nextEvent === "error") {
+			setHeartbeatState("error");
+			return;
+		}
 
 		if (!nextEvent) {
 			setHeartbeatState("none");
@@ -101,6 +105,7 @@ export default function App() {
 						{heartbeatState === "loading" && "Syncing our heartbeat..."}
 						{heartbeatState === "counting" && getTimeStr(heartbeats)}
 						{heartbeatState === "none" && "Nothing planned, but I'll see you soon love!"}
+						{heartbeatState === "error" && "Joel's OAuth token has probably expired :("}
 					</span>
 					<span className="text-sm text-pink-700">For Emily x</span>
 				</div>

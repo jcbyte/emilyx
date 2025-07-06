@@ -1,12 +1,18 @@
-export async function getNextEvent(): Promise<null | Date> {
+export async function getNextEvent(): Promise<Date | null | "error"> {
 	type EventAPIResponse = { event: false } | { event: true; start: string };
 
-	const res = (await fetch("/api/getNextEvent", {
+	const res = await fetch("/api/getNextEvent", {
 		method: "GET",
-	}).then((res) => res.json())) as EventAPIResponse;
+	});
 
-	if (!res.event) return null;
+	if (!res.ok) {
+		return "error";
+	}
 
-	const date = new Date(res.start);
+	const data = (await res.json()) as EventAPIResponse;
+
+	if (!data.event) return null;
+
+	const date = new Date(data.start);
 	return date;
 }

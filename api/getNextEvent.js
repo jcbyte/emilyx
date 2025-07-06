@@ -25,14 +25,19 @@ export default async function (req, res) {
 	const calendar = google.calendar({ version: "v3", auth: authClient });
 
 	// Search for future events with "Emily" in the title
-	const calendar_res = await calendar.events.list({
-		calendarId: "primary",
-		timeMin: new Date().toISOString(),
-		maxResults: 2,
-		singleEvents: true,
-		orderBy: "startTime",
-		q: "Emily",
-	});
+	let calendar_res;
+	try {
+		calendar_res = await calendar.events.list({
+			calendarId: "primary",
+			timeMin: new Date().toISOString(),
+			maxResults: 2,
+			singleEvents: true,
+			orderBy: "startTime",
+			q: "Emily",
+		});
+	} catch {
+		return res.status(503).json({ message: "OAuth2 disallowed" });
+	}
 
 	const events = calendar_res.data.items;
 
