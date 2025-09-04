@@ -3,25 +3,41 @@ import limeImg from "../assets/lime.png";
 import { randomInt } from "../tools";
 import type { ParticleOnDieCallback } from "./ParticleGenerator";
 
-export const edges = ["top", "bottom", "left", "right"] as const;
-export type Edge = (typeof edges)[number];
+const edges = ["top", "bottom", "left", "right"] as const;
+type Edge = (typeof edges)[number];
 
-export const SIZE = 80;
-export const OUT_DURATION = 1000;
-export const TRANSITION_DURATION = 1000;
+interface ParticleData {
+	size: number;
+	outDuration: number;
+	transitionDuration: number;
+	edge: Edge;
+	offset: number;
+	rotation: number;
+}
 
 export default function LimeParticle({ onDie }: { onDie: ParticleOnDieCallback }) {
 	// Generate random values
-	const edge: Edge = useMemo(() => edges[randomInt(0, edges.length)], []);
-	const offset = useMemo(() => {
+	const pd: ParticleData = useMemo(() => {
+		const size = randomInt(60, 100);
+		const outDuration = randomInt(400, 1400);
+		const transitionDuration = 500;
+		const edge = edges[randomInt(0, edges.length)];
 		const maxOffset = {
 			top: window.innerWidth,
 			bottom: window.innerWidth,
 			left: window.innerHeight,
 			right: window.innerHeight,
 		}[edge];
-		return randomInt(SIZE / 2, maxOffset - SIZE / 2);
-	}, [edge]);
+		const offset = randomInt(size / 2, maxOffset - size / 2);
+		const rotation = {
+			top: randomInt(175, 185),
+			bottom: randomInt(-5, 5),
+			left: randomInt(75, 90),
+			right: randomInt(-90, -75),
+		}[edge];
+
+		return { size, outDuration, transitionDuration, edge, offset, rotation };
+	}, []);
 
 	const [out, setOut] = useState<boolean>(false);
 
@@ -35,8 +51,8 @@ export default function LimeParticle({ onDie }: { onDie: ParticleOnDieCallback }
 			currentTimeout = setTimeout(() => {
 				setOut(false);
 
-				currentTimeout = setTimeout(onDie, TRANSITION_DURATION);
-			}, TRANSITION_DURATION + OUT_DURATION);
+				currentTimeout = setTimeout(onDie, pd.transitionDuration);
+			}, pd.transitionDuration + pd.outDuration);
 		});
 
 		return () => {
@@ -46,22 +62,23 @@ export default function LimeParticle({ onDie }: { onDie: ParticleOnDieCallback }
 	}, []);
 
 	const animClass = {
-		top: `-translate-x-1/2 rotate-180 ${out ? "-top-3" : "-top-20"}`,
-		bottom: `-translate-x-1/2 rotate-0 ${out ? "-bottom-3" : "-bottom-20"}`,
-		left: `-translate-y-1/2 rotate-75 ${out ? "-left-3" : "-left-20"}`,
-		right: `-translate-y-1/2 -rotate-75 ${out ? "-right-3" : "-right-20"}`,
-	}[edge];
+		top: `-translate-x-1/2 ${out ? "-top-3" : "-top-20"}`,
+		bottom: `-translate-x-1/2 ${out ? "-bottom-3" : "-bottom-20"}`,
+		left: `-translate-y-1/2 ${out ? "-left-3" : "-left-20"}`,
+		right: `-translate-y-1/2 ${out ? "-right-3" : "-right-20"}`,
+	}[pd.edge];
 
 	const style: React.CSSProperties = {
-		transitionDuration: `${TRANSITION_DURATION}ms`,
-		width: SIZE,
-		height: SIZE,
+		transitionDuration: `${pd.transitionDuration}ms`,
+		width: pd.size,
+		height: pd.size,
+		rotate: `${pd.rotation}deg`,
 		...{
-			top: { left: offset },
-			bottom: { left: offset },
-			left: { top: offset },
-			right: { top: offset },
-		}[edge],
+			top: { left: pd.offset },
+			bottom: { left: pd.offset },
+			left: { top: pd.offset },
+			right: { top: pd.offset },
+		}[pd.edge],
 	};
 
 	return <img src={limeImg} alt="Lime" className={`fixed transition-all ease-in-out ${animClass}`} style={style} />;

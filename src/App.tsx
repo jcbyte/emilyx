@@ -223,7 +223,7 @@ export default function App() {
 				</div>
 			</div>
 
-			<ParticleGenerator Particle={LimeParticle} emissionRate={1000} />
+			<ParticleGenerator Particle={LimeParticle} emissionRate={5500} delay={3500} />
 		</div>
 	);
 }
