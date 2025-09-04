@@ -4,6 +4,8 @@ import { motion } from "motion/react";
 import { getNextEvent } from "./api";
 import Heart from "./assets/heart.svg?react";
 import Bubbles from "./components/Bubbles";
+import LimeParticle from "./components/LimeParticle";
+import ParticleGenerator from "./components/ParticleGenerator";
 
 const BPM = 70;
 
@@ -109,8 +111,7 @@ export default function App() {
 		};
 	}, [nextEvent, heartbeatState]);
 
-	// todo handle currently in event
-	// todo checkout limes
+	// todo handle currently in event (text popup)
 	// todo bubbles (particle generator?)
 
 	return (
@@ -221,6 +222,8 @@ export default function App() {
 					)}
 				</div>
 			</div>
+
+			<ParticleGenerator Particle={LimeParticle} emissionRate={1000} />
 		</div>
 	);
 }
