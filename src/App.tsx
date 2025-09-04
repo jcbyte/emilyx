@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 
+import { motion } from "motion/react";
 import { getNextEvent } from "./api";
 import Heart from "./assets/heart.svg?react";
-import AnimatedLimes from "./components/AnimatedLimes";
+import Bubbles from "./components/Bubbles";
 
 const BPM = 70;
 
@@ -108,42 +109,108 @@ export default function App() {
 		};
 	}, [nextEvent, heartbeatState]);
 
-	// todo refresh ui
-	// todo heart animation
+	// todo should i show "0h" ?
+	// todo initial animations
 	// todo handle currently in event
 	// todo checkout limes
+	// todo bubbles (particle generator?)
 
 	return (
-		<>
-			<div className="flex flex-col items-center justify-center gap-6 pt-24 px-2">
-				<span className="text-3xl font-semibold text-pink-600 text-center">
-					Counting heartbeats until we're together!
-				</span>
+		<div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-red-50 flex items-center justify-center p-4 pb-16">
+			<div className="w-full mx-auto flex flex-col gap-4">
+				<motion.div
+					initial={{ opacity: 0, scale: 0.8 }}
+					animate={{ opacity: 1, scale: 1 }}
+					transition={{ duration: 1, ease: "easeOut" }}
+					className="flex flex-col gap-1 items-center"
+				>
+					<span className="text-4xl md:text-6xl font-light text-gray-800">Until we're</span>
+					<span className="text-5xl pb-2 md:text-7xl md:pb-4 font-bold bg-gradient-to-r from-rose-600 via-pink-500 to-red-500 bg-clip-text text-transparent">
+						Together
+					</span>
+				</motion.div>
 
 				<div className="relative">
-					<Heart className="h-48 w-48 fill-pink-400 stroke-pink-600 transition-all duration-200" />
-					<div className="absolute inset-0 flex items-center justify-center">
-						{/* Bottom padding to make the text look more central */}
-						<span className="text-fuchsia-50 font-bold text-xl pb-4">
-							{heartbeatState === "event" && Math.floor(heartbeatsUntil).toLocaleString()}
-							{heartbeatState === "none" && "Stunner"}
-						</span>
-					</div>
+					<motion.div
+						className="mx-auto w-64 h-64 md:w-80 md:h-80 drop-shadow-2xl"
+						animate={{
+							scale: [1, 1.05, 1],
+							filter: [
+								"drop-shadow(0 10px 30px rgba(244, 63, 94, 0.3))",
+								"drop-shadow(0 15px 40px rgba(244, 63, 94, 0.4))",
+								"drop-shadow(0 10px 30px rgba(244, 63, 94, 0.3))",
+							],
+						}}
+						transition={{
+							duration: 60 / BPM,
+							repeat: Infinity,
+							ease: "easeInOut",
+						}}
+					>
+						<Heart />
+
+						<div className="absolute inset-0 flex flex-col items-center justify-center px-4 pb-6">
+							{timeUntil ? (
+								<motion.div
+									className="text-center text-white flex flex-col items-center gap-1"
+									initial={{ opacity: 0 }}
+									animate={{ opacity: 1 }}
+									transition={{ delay: 0.5 }}
+								>
+									<div className="text-2xl md:text-3xl font-bold drop-shadow-lg">
+										{timeUntil.days}d {timeUntil.hours}h
+									</div>
+									<div className="text-xl md:text-2xl font-semibold drop-shadow-lg">
+										{timeUntil.minutes}m {timeUntil.seconds}s
+									</div>
+								</motion.div>
+							) : (
+								<motion.div
+									className="text-white text-center"
+									initial={{ scale: 0 }}
+									animate={{ scale: 1 }}
+									transition={{ type: "spring", bounce: 0.5 }}
+								>
+									<div className="text-2xl md:text-3xl font-bold drop-shadow-lg">Together!</div>
+								</motion.div>
+							)}
+						</div>
+
+						<Bubbles n={6} xpad={20} />
+					</motion.div>
 				</div>
 
-				<div className="flex flex-col gap-2 justify-center items-center">
-					<span className="text-lg text-pink-700 text-center">
-						{heartbeatState === "loading" && "Syncing our heartbeat..."}
-						{heartbeatState === "event" &&
-							`${timeUntil.days}d ${timeUntil.hours}h ${timeUntil.minutes}m ${timeUntil.seconds}s`}
-						{heartbeatState === "none" && "Nothing planned, but I'll see you soon love!"}
-						{heartbeatState === "error" && "Joel's OAuth token has probably expired :("}
-					</span>
-					<span className="text-sm text-pink-700">For Emily x</span>
-				</div>
+				{heartbeatsUntil > 0 && (
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: 0.8 }}
+						className="bg-black/8 backdrop-blur-sm rounded-3xl px-8 py-4 shadow-lg border border-rose-200/50 max-w-md mx-auto flex flex-col gap-1 items-center"
+					>
+						<span className="text-2xl font-bold text-gray-800">{Math.floor(heartbeatsUntil).toLocaleString()}</span>
+						<span className="text-sm text-gray-700">heartbeats until we're together</span>
+					</motion.div>
+				)}
+
+				{nextEvent && (
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{ delay: 1.2 }}
+						className="flex justify-center"
+					>
+						<p className="text-gray-600 text-sm">
+							{nextEvent.toLocaleString("en-GB", {
+								weekday: "short",
+								day: "numeric",
+								month: "short",
+								hour: "2-digit",
+								minute: "2-digit",
+							})}
+						</p>
+					</motion.div>
+				)}
 			</div>
-
-			<AnimatedLimes />
-		</>
+		</div>
 	);
 }
