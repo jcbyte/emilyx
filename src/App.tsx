@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { motion, useAnimation } from "motion/react";
+import { motion } from "motion/react";
 import { getNextEvent } from "./api";
 import Heart from "./assets/heart.svg?react";
 import Bubbles from "./components/Bubbles";
@@ -109,31 +109,9 @@ export default function App() {
 		};
 	}, [nextEvent, heartbeatState]);
 
-	// todo should i show "0h" ?
 	// todo handle currently in event
 	// todo checkout limes
 	// todo bubbles (particle generator?)
-
-	const controls = useAnimation();
-
-	useEffect(() => {
-		if (nextEvent) {
-			// Smoothly transition to the next loop
-			controls.start({});
-		} else {
-			// Fade out previous loop and start new loop
-			controls.start({
-				opacity: [1, 0.5, 1], // fade-in/fade-out loop
-				scale: 1, // reset scale to avoid snap
-				filter: "drop-shadow(0 10px 30px rgba(244, 63, 94, 0.3))", // reset filter
-				transition: {
-					duration: 1.5,
-					repeat: Infinity,
-					ease: "easeInOut",
-				},
-			});
-		}
-	}, [nextEvent, BPM, controls]);
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-red-50 flex items-center justify-center p-4 pb-16">
@@ -184,10 +162,12 @@ export default function App() {
 										animate={{ opacity: nextEvent ? 1 : 0 }}
 									>
 										<div className="text-2xl md:text-3xl font-bold drop-shadow-lg">
-											{timeUntil.days}d {timeUntil.hours}h
+											{timeUntil.days > 0 && `${timeUntil.days}d `}
+											{timeUntil.hours > 0 && `${timeUntil.hours}h`}
 										</div>
 										<div className="text-xl md:text-2xl font-semibold drop-shadow-lg">
-											{timeUntil.minutes}m {timeUntil.seconds}s
+											{timeUntil.minutes > 0 && `${timeUntil.minutes}m `}
+											{timeUntil.seconds > 0 && `${timeUntil.seconds}s`}
 										</div>
 									</motion.div>
 								) : (
