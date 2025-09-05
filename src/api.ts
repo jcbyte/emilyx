@@ -1,4 +1,6 @@
-export async function getNextEvent(): Promise<Date | null | "error"> {
+type ApiResponse<T> = { ok: true; data: T } | { ok: false };
+
+export async function getNextEvent(): Promise<ApiResponse<Date | null>> {
 	type EventAPIResponse = { event: false } | { event: true; start: string };
 
 	const res = await fetch("/api/getNextEvent", {
@@ -6,13 +8,13 @@ export async function getNextEvent(): Promise<Date | null | "error"> {
 	});
 
 	if (!res.ok) {
-		return "error";
+		return { ok: false };
 	}
 
 	const data = (await res.json()) as EventAPIResponse;
 
-	if (!data.event) return null;
+	if (!data.event) return { ok: true, data: null };
 
 	const date = new Date(data.start);
-	return date;
+	return { ok: true, data: date };
 }
