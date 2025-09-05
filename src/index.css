@@ -15,5 +15,5 @@
 }
 
 body {
-	@apply min-h-screen bg-gradient-to-br from-pink-100 to-pink-300;
+	@apply min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-red-50;
 }

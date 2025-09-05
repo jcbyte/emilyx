@@ -103,8 +103,6 @@ export default function App() {
 		};
 	}, [nextEvent, eventStatus]);
 
-	// todo icon
-
 	function getHeartContent(): React.ReactNode {
 		if (!eventLoaded) return;
 
@@ -149,7 +147,7 @@ export default function App() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-red-50 flex items-center justify-center p-4 pb-16">
+		<div className="min-h-screen flex items-center justify-center p-4 pb-16">
 			<div className="w-full mx-auto flex flex-col gap-4">
 				<motion.div layout className="flex flex-col gap-2">
 					<motion.div
