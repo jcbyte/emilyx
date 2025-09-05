@@ -16,20 +16,23 @@ export default function ParticleGenerator({
 	const [particles, setParticles] = useState<Record<string, ParticleComponent>>({});
 
 	useEffect(() => {
-		let generatorTimeout: NodeJS.Timeout | null = null;
+		let generatorInterval: NodeJS.Timeout | null = null;
 
-		function beginGeneration() {
+		function generateParticle() {
 			const particleId = uuidv4();
 			setParticles((prev) => ({ ...prev, [particleId]: Particle }));
+		}
 
-			generatorTimeout = setTimeout(beginGeneration, emissionRate);
+		function beginGeneration() {
+			generateParticle();
+			generatorInterval = setInterval(generateParticle, emissionRate);
 		}
 
 		const initialTimeout = setTimeout(beginGeneration, delay);
 
 		return () => {
 			clearTimeout(initialTimeout);
-			if (generatorTimeout) clearTimeout(generatorTimeout);
+			if (generatorInterval) clearInterval(generatorInterval);
 		};
 	}, [Particle, delay, emissionRate]);
 
