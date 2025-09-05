@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-export type ParticleOnDieCallback = () => void;
-type ParticleComponent = React.FC<{ onDie: ParticleOnDieCallback }>;
+export type ParticleProps = { onDie: () => void };
+type ParticleComponent = React.FC<ParticleProps>;
 
 export default function ParticleGenerator({
 	Particle,

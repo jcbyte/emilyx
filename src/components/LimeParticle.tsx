@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import limeImg from "../assets/lime.png";
 import { randomInt } from "../tools";
-import type { ParticleOnDieCallback } from "./ParticleGenerator";
+import type { ParticleProps } from "./ParticleGenerator";
 
 const edges = ["top", "bottom", "left", "right"] as const;
 type Edge = (typeof edges)[number];
@@ -15,7 +15,7 @@ interface ParticleData {
 	rotation: number;
 }
 
-export default function LimeParticle({ onDie }: { onDie: ParticleOnDieCallback }) {
+export default function LimeParticle({ onDie }: ParticleProps) {
 	// Generate random values
 	const pd: ParticleData = useMemo(() => {
 		const size = randomInt(60, 100);

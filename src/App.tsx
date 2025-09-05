@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { getNextEvent } from "./api";
 import Heart from "./assets/heart.svg?react";
-import Bubbles from "./components/Bubbles";
+import BubbleParticle from "./components/BubbleParticle";
 import LimeParticle from "./components/LimeParticle";
 import ParticleGenerator from "./components/ParticleGenerator";
 
@@ -112,7 +112,6 @@ export default function App() {
 	}, [nextEvent, heartbeatState]);
 
 	// todo handle currently in event (text popup)
-	// todo bubbles (particle generator?)
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-red-50 flex items-center justify-center p-4 pb-16">
@@ -183,7 +182,7 @@ export default function App() {
 								)}
 							</div>
 
-							{nextEvent && <Bubbles n={6} xpad={20} />}
+							<ParticleGenerator Particle={BubbleParticle} emissionRate={400} />
 						</motion.div>
 					</div>
 				</motion.div>
