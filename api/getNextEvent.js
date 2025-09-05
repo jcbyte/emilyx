@@ -30,9 +30,9 @@ export default async function (req, res) {
 		calendar_res = await calendar.events.list({
 			calendarId: "primary",
 			timeMin: new Date().toISOString(),
-			maxResults: 2,
+			maxResults: 1,
 			singleEvents: true,
-			orderBy: "startTime",
+			eventTypes: "default", // Exclude birthday events
 			q: "Emily",
 		});
 	} catch {
@@ -40,9 +40,7 @@ export default async function (req, res) {
 	}
 
 	const events = calendar_res.data.items;
-
-	// Exclude birthday events
-	const nextEmilyEvent = events?.find((event) => event.eventType !== "birthday");
+	const nextEmilyEvent = events[0] ?? null;
 
 	if (!nextEmilyEvent) {
 		return res.status(200).json({ event: false });
