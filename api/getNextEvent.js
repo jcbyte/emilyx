@@ -32,6 +32,7 @@ export default async function (req, res) {
 			timeMin: new Date().toISOString(),
 			maxResults: 1,
 			singleEvents: true,
+			orderBy: "startTime",
 			eventTypes: "default", // Exclude birthday events
 			q: "Emily",
 		});
