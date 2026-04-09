@@ -1,6 +1,6 @@
 # <img src="public/icon/icon-512.png" height="40"> &nbsp;Emilyx
 
-A little app for Emily that counts down until we're together again.
+A web app for Emily that counts down until we're together again.
 
 ## Production Build
 
