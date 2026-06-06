@@ -39,27 +39,37 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 		return { size, outDuration, transitionDuration, edge, offset, rotation };
 	}, []);
 
+	const [animating, setAnimating] = useState<boolean>(true);
 	const [out, setOut] = useState<boolean>(false);
+	const [particleCreatedTime] = useState<number>(performance.now());
 
 	useEffect(() => {
-		let currentTimeout: number | null = null;
+		let animationFrame: number | null = null;
 
-		// Wait until the next paint to start transition to ensure `out === false`
-		const animationFrame = requestAnimationFrame(() => {
-			setOut(true);
+		const completeOutTime = particleCreatedTime + pd.transitionDuration + pd.outDuration;
+		const dieTime = completeOutTime + pd.transitionDuration;
 
-			currentTimeout = setTimeout(() => {
+		function animLoop(currentTime: number) {
+			if (!animating) return;
+
+			if (currentTime >= dieTime) {
+				onDie();
+			} else if (currentTime >= completeOutTime) {
 				setOut(false);
+			} else {
+				// On the first paint set `out` to true to ensure initial rendering of `out === false`
+				setOut(true);
+			}
 
-				currentTimeout = setTimeout(onDie, pd.transitionDuration);
-			}, pd.transitionDuration + pd.outDuration);
-		});
+			animationFrame = requestAnimationFrame(animLoop);
+		}
+
+		animationFrame = requestAnimationFrame(animLoop);
 
 		return () => {
-			cancelAnimationFrame(animationFrame);
-			if (currentTimeout) clearTimeout(currentTimeout);
+			if (animationFrame) cancelAnimationFrame(animationFrame);
 		};
-	}, []);
+	}, [animating, onDie, pd, particleCreatedTime]);
 
 	const animClass = {
 		top: `-translate-x-1/2 ${out ? "-top-3" : "-top-20"}`,
@@ -68,18 +78,42 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 		right: `-translate-y-1/2 ${out ? "-right-3" : "-right-20"}`,
 	}[pd.edge];
 
-	const style: React.CSSProperties = {
-		transitionDuration: `${pd.transitionDuration}ms`,
-		width: pd.size,
-		height: pd.size,
-		rotate: `${pd.rotation}deg`,
-		...{
-			top: { left: pd.offset },
-			bottom: { left: pd.offset },
-			left: { top: pd.offset },
-			right: { top: pd.offset },
-		}[pd.edge],
-	};
+	const style: React.CSSProperties = animating
+		? {
+				transitionDuration: `${pd.transitionDuration}ms`,
+				width: pd.size,
+				height: pd.size,
+				rotate: `${pd.rotation}deg`,
+				...{
+					top: { left: pd.offset },
+					bottom: { left: pd.offset },
+					left: { top: pd.offset },
+					right: { top: pd.offset },
+				}[pd.edge],
+			}
+		: {
+				// e.g. transition
+				transitionDuration: `1s`,
+				width: "100px",
+				height: "100px",
+				rotate: `0deg`,
+				top: "100px",
+				left: "100px",
+			};
 
-	return <img src={limeImg} alt="Lime" className={`fixed transition-all ease-in-out ${animClass}`} style={style} />;
+	function clickLime() {
+		setAnimating(false);
+		// todo go to the center of screen, large (maybe shake, and then die)
+		// onDie();
+	}
+
+	return (
+		<img
+			src={limeImg}
+			alt="Lime"
+			onClick={clickLime}
+			className={`fixed transition-all ease-in-out ${animClass}`}
+			style={style}
+		/>
+	);
 }
