@@ -16,23 +16,27 @@ export default function ParticleGenerator({
 	const [particles, setParticles] = useState<Record<string, ParticleComponent>>({});
 
 	useEffect(() => {
-		let generatorInterval: number | null = null;
+		let animationFrame: number | null = null;
+		let lastEmission = 0;
 
-		function generateParticle() {
-			const particleId = uuidv4();
-			setParticles((prev) => ({ ...prev, [particleId]: Particle }));
+		function animLoop(currentTime: number) {
+			if (currentTime - lastEmission >= emissionRate) {
+				const particleId = uuidv4();
+				setParticles((prev) => ({ ...prev, [particleId]: Particle }));
+
+				lastEmission = currentTime;
+			}
+
+			animationFrame = requestAnimationFrame(animLoop);
 		}
 
-		function beginGeneration() {
-			generateParticle();
-			generatorInterval = setInterval(generateParticle, emissionRate);
-		}
-
-		const initialTimeout = setTimeout(beginGeneration, delay);
+		const initialTimeout = setTimeout(() => {
+			animationFrame = requestAnimationFrame(animLoop);
+		}, delay);
 
 		return () => {
 			clearTimeout(initialTimeout);
-			if (generatorInterval) clearInterval(generatorInterval);
+			if (animationFrame) cancelAnimationFrame(animationFrame);
 		};
 	}, [Particle, delay, emissionRate]);
 
