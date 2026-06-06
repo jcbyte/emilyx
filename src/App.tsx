@@ -18,8 +18,8 @@ interface Time {
 
 export default function App() {
 	const [nextEvent, setNextEvent] = useState<Date | null>(null);
-	const [eventStatus, setHeartbeatState] = useState<"loading" | "event" | "none" | "error">("loading");
-	const eventLoaded = useMemo(() => eventStatus !== "loading", [eventStatus]);
+	const [eventState, setEventState] = useState<"loading" | "event" | "none" | "error">("loading");
+	const eventLoaded = useMemo(() => eventState !== "loading", [eventState]);
 
 	const [heartbeatsUntil, setHeartbeatsUntil] = useState<number>(0);
 	const together = useMemo(() => Math.floor(heartbeatsUntil) <= 0, [heartbeatsUntil]);
@@ -31,51 +31,54 @@ export default function App() {
 			// Get next event from calendar
 			const nextEventTime = await getNextEvent();
 			if (!nextEventTime.ok) {
-				setHeartbeatState("error");
+				setEventState("error");
 				return;
 			}
 
-			if (nextEventTime.data === null) setHeartbeatState("none");
-			else setHeartbeatState("event");
-			setNextEvent(nextEventTime.data);
+			if (nextEventTime.data === null) {
+				setEventState("none");
+			} else {
+				setEventState("event");
+				setNextEvent(nextEventTime.data);
+			}
 		}
 
 		// Initially load timestamp
 		loadNextEvent();
 	}, []);
 
-	function getTimeRemaining(): number | null {
-		// Get time until even in milliseconds
-		if (!nextEvent) return null;
-		return nextEvent.getTime() - Date.now();
-	}
-
-	function getHeartbeatsUntil(): number | null {
-		const mills = getTimeRemaining();
-		if (!mills) return null;
-
-		return (mills / 1000 / 60) * BPM;
-	}
-
-	function getTimeUntil(): Time | null {
-		const mills = getTimeRemaining();
-		if (!mills) return null;
-
-		const secondsTotal = Math.floor(mills / 1000);
-
-		const days = Math.floor(secondsTotal / (24 * 60 * 60));
-		const hours = Math.floor((secondsTotal % (24 * 60 * 60)) / (60 * 60));
-		const minutes = Math.floor((secondsTotal % (60 * 60)) / 60);
-		const seconds = secondsTotal % 60;
-
-		return { days, hours, minutes, seconds };
-	}
-
 	useEffect(() => {
-		let heartbeatInterval: NodeJS.Timeout | null = null;
-		let timeInterval: NodeJS.Timeout | null = null;
+		function getTimeRemaining(): number | null {
+			// Get time until event in milliseconds
+			if (!nextEvent) return null;
+			return nextEvent.getTime() - Date.now();
+		}
 
-		if (eventStatus === "event") {
+		function getHeartbeatsUntil(): number | null {
+			const mills = getTimeRemaining();
+			if (!mills) return null;
+
+			return (mills / 1000 / 60) * BPM;
+		}
+
+		function getTimeUntil(): Time | null {
+			const mills = getTimeRemaining();
+			if (!mills) return null;
+
+			const secondsTotal = Math.floor(mills / 1000);
+
+			const days = Math.floor(secondsTotal / (24 * 60 * 60));
+			const hours = Math.floor((secondsTotal % (24 * 60 * 60)) / (60 * 60));
+			const minutes = Math.floor((secondsTotal % (60 * 60)) / 60);
+			const seconds = secondsTotal % 60;
+
+			return { days, hours, minutes, seconds };
+		}
+
+		let heartbeatInterval: number | null = null;
+		let timeInterval: number | null = null;
+
+		if (eventState === "event") {
 			function updateHeartbeatsUntil() {
 				const heartbeats = getHeartbeatsUntil();
 				if (!heartbeats) return;
@@ -101,12 +104,12 @@ export default function App() {
 			if (heartbeatInterval) clearInterval(heartbeatInterval);
 			if (timeInterval) clearInterval(timeInterval);
 		};
-	}, [nextEvent, eventStatus]);
+	}, [nextEvent, eventState]);
 
 	function getHeartContent(): React.ReactNode {
 		if (!eventLoaded) return;
 
-		switch (eventStatus) {
+		switch (eventState) {
 			case "event":
 				if (together) {
 					return (
@@ -174,10 +177,10 @@ export default function App() {
 												"drop-shadow(0 15px 40px rgba(244, 63, 94, 0.4))",
 												"drop-shadow(0 10px 30px rgba(244, 63, 94, 0.3))",
 											],
-									  }
+										}
 									: {
 											opacity: [1, 0.5, 1],
-									  }
+										}
 							}
 							transition={{
 								duration: eventLoaded ? 60 / BPM : 1.5,
@@ -190,7 +193,7 @@ export default function App() {
 							<div className="absolute inset-0 flex items-center justify-center px-4">
 								<motion.div
 									// To show new animation on content changes
-									key={`heartContent-${eventStatus}-${together}`}
+									key={`heartContent-${eventState}-${together}`}
 									initial={{ scale: 0 }}
 									animate={{ scale: 1 }}
 									transition={{ type: "spring", bounce: 0.5 }}
@@ -204,7 +207,7 @@ export default function App() {
 					</div>
 				</motion.div>
 
-				{eventStatus === "event" && !together && (
+				{eventState === "event" && !together && (
 					<div className="flex flex-col gap-2">
 						<motion.div
 							layout
