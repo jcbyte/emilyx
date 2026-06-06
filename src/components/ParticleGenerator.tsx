@@ -16,7 +16,7 @@ export default function ParticleGenerator({
 	const [particles, setParticles] = useState<Record<string, ParticleComponent>>({});
 
 	useEffect(() => {
-		let generatorInterval: NodeJS.Timeout | null = null;
+		let generatorInterval: number | null = null;
 
 		function generateParticle() {
 			const particleId = uuidv4();
