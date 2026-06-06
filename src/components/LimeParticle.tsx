@@ -42,7 +42,7 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 	const [out, setOut] = useState<boolean>(false);
 
 	useEffect(() => {
-		let currentTimeout: NodeJS.Timeout | null = null;
+		let currentTimeout: number | null = null;
 
 		// Wait until the next paint to start transition to ensure `out === false`
 		const animationFrame = requestAnimationFrame(() => {
