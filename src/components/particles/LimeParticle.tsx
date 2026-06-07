@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import limeImg from "../../assets/lime.png";
+import useLimeCount from "../../hooks/useLimeCount";
 import { randomInt } from "../../tools";
 import type { ParticleProps } from "../ParticleGenerator";
 
@@ -41,9 +42,14 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 		return { size, outDuration, transitionDuration, clickedTransitionDuration, edge, offset, rotation };
 	}, []);
 
-	const [animating, setAnimating] = useState<boolean>(true);
-	const [out, setOut] = useState<boolean>(false);
 	const [particleCreatedTime] = useState<number>(performance.now());
+
+	const [out, setOut] = useState<boolean>(false);
+	const [animating, setAnimating] = useState<boolean>(true);
+	const [pulsing, setPulsing] = useState<boolean>(false);
+	const pulseClassName = pulsing ? "opacity-0 scale-200" : "opacity-100 scale-100";
+
+	const [, setLimes] = useLimeCount();
 
 	useEffect(() => {
 		let animationFrame: number | null = null;
@@ -121,15 +127,14 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 		// After lime reaches the center, perform a pulse
 		setTimeout(() => {
 			setPulsing(true);
+			// Add to the lime counter (we've collected one)
+			setLimes((current) => current + 1);
 		}, pd.clickedTransitionDuration);
 		// After the pulse completes, remove lime
 		setTimeout(() => {
 			onDie();
 		}, pd.clickedTransitionDuration * 2);
 	}
-
-	const [pulsing, setPulsing] = useState<boolean>(false);
-	const pulseClassName = pulsing ? "opacity-0 scale-200" : "opacity-100 scale-100";
 
 	return (
 		<img
