@@ -71,12 +71,22 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 		};
 	}, [animating, onDie, pd, particleCreatedTime]);
 
-	const animClass = {
-		top: `-translate-x-1/2 ${out ? "-top-3" : "-top-20"}`,
-		bottom: `-translate-x-1/2 ${out ? "-bottom-3" : "-bottom-20"}`,
-		left: `-translate-y-1/2 ${out ? "-left-3" : "-left-20"}`,
-		right: `-translate-y-1/2 ${out ? "-right-3" : "-right-20"}`,
-	}[pd.edge];
+	const className = animating
+		? {
+				top: `-translate-x-1/2 ${out ? "-top-3" : "-top-20"}`,
+				bottom: `-translate-x-1/2 ${out ? "-bottom-3" : "-bottom-20"}`,
+				left: `-translate-y-1/2 ${out ? "-left-3" : "-left-20"}`,
+				right: `-translate-y-1/2 ${out ? "-right-3" : "-right-20"}`,
+			}[pd.edge]
+		: // Set size for non-animating in class, to respect screen size
+			`w-68 h-68 md:w-92 md:h-92 ${
+				{
+					top: `-translate-x-1/2 -translate-y-1/2 top-[50%]`,
+					bottom: `-translate-x-1/2 translate-y-1/2 bottom-[50%]`,
+					left: `-translate-x-1/2 -translate-y-1/2 left-[50%]`,
+					right: `translate-x-1/2 -translate-y-1/2 right-[50%]`,
+				}[pd.edge]
+			}`;
 
 	const style: React.CSSProperties = animating
 		? {
@@ -92,19 +102,26 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 				}[pd.edge],
 			}
 		: {
-				// e.g. transition
 				transitionDuration: `1s`,
-				width: "100px",
-				height: "100px",
 				rotate: `0deg`,
-				top: "100px",
-				left: "100px",
+				...{
+					top: { left: "50%" },
+					bottom: { left: "50%" },
+					left: { top: "50%" },
+					right: { top: "50%" },
+				}[pd.edge],
 			};
 
 	function clickLime() {
+		if (!animating) return;
 		setAnimating(false);
-		// todo go to the center of screen, large (maybe shake, and then die)
-		// onDie();
+
+		// todo once lime has reached the center, do a single ping
+
+		// Remove the particle
+		setTimeout(() => {
+			onDie();
+		}, 2000);
 	}
 
 	return (
@@ -112,7 +129,7 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 			src={limeImg}
 			alt="Lime"
 			onClick={clickLime}
-			className={`fixed transition-all ease-in-out ${animClass}`}
+			className={`fixed transition-all ease-in-out ${className}`}
 			style={style}
 		/>
 	);
