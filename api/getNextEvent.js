@@ -45,7 +45,8 @@ export default async function (req, res) {
 
 	// Extract the next event, which is not excluded
 	const events = calendar_res.data.items;
-	const nextEmilyEvent = events.find((e) => e.recurringEventId && !excludedEvents.includes(e.recurringEventId));
+	console.log(events);
+	const nextEmilyEvent = events.find((e) => !(e.recurringEventId && excludedEvents.includes(e.recurringEventId)));
 
 	if (!nextEmilyEvent || !nextEmilyEvent.start) {
 		return res.status(200).json({ event: false });
