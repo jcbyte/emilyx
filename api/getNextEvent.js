@@ -24,13 +24,16 @@ export default async function (req, res) {
 
 	const calendar = google.calendar({ version: "v3", auth: authClient });
 
+	const excludedEvents = process.env.EXCLUDED_RECURRING_IDS?.split(",") ?? [];
+
 	// Search for future events with "Emily" in the title
 	let calendar_res;
 	try {
 		calendar_res = await calendar.events.list({
 			calendarId: "primary",
 			timeMin: new Date().toISOString(),
-			maxResults: 1,
+			// In case the next n events are all excluded
+			maxResults: 1 + excludedEvents.length,
 			singleEvents: true,
 			orderBy: "startTime",
 			eventTypes: "default", // Exclude birthday events
@@ -40,13 +43,16 @@ export default async function (req, res) {
 		return res.status(503).json({ message: "OAuth2 disallowed" });
 	}
 
+	// Extract the next event, which is not excluded
 	const events = calendar_res.data.items;
-	const nextEmilyEvent = events[0] ?? null;
+	const nextEmilyEvent = events.find((e) => !(e.recurringEventId && excludedEvents.includes(e.recurringEventId)));
 
-	if (!nextEmilyEvent) {
+	if (!nextEmilyEvent || !nextEmilyEvent.start) {
 		return res.status(200).json({ event: false });
 	}
 
 	// Return the time of the next event
-	return res.status(200).json({ event: true, start: nextEmilyEvent.start?.dateTime });
+	// If it is an all-day event, return the day start
+	const eventStart = nextEmilyEvent.start.dateTime ?? `${nextEmilyEvent.start.date}T00:00:00.000Z`;
+	return res.status(200).json({ event: true, start: eventStart });
 }
