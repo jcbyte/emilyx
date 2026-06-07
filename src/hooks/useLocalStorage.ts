@@ -14,14 +14,19 @@ export default function useLocalStorage<T>(key: string, initialValue: T): [T, (v
 	function setValue(v: ValueFunction<T>) {
 		setV((currentValue) => {
 			const storeValue: T = v instanceof Function ? v(currentValue) : v;
-			window.localStorage.setItem(key, JSON.stringify(storeValue));
-			// Send an event, so all hooks update the state
-			window.dispatchEvent(new CustomEvent(STORAGE_EVENT, { detail: { key, newValue: storeValue } }));
 			return storeValue;
 		});
 	}
 
-	// Update the state, when receiving the event that it has been updated
+	// This is performed in a `useEffect` rather than in `setValue` in order to prevent broadcasting a stale update during render
+	useEffect(() => {
+		// Update localstorage with the new value
+		window.localStorage.setItem(key, JSON.stringify(value));
+		// Send an event, so all hooks update the state
+		window.dispatchEvent(new CustomEvent(STORAGE_EVENT, { detail: { key, newValue: value } }));
+	}, [key, value]);
+
+	// Handle updating this state when modified elsewhere
 	useEffect(() => {
 		function handleStorageEvent(ev: CustomEvent<{ key: string; newValue: T }>) {
 			if (ev.detail.key === key) {

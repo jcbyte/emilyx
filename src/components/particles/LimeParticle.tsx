@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import limeImg from "../../assets/lime.png";
 import useLimeCount from "../../hooks/useLimeCount";
+import useLimeCountShownContext from "../../hooks/useLimeCountShownContext";
 import { randomInt } from "../../tools";
 import type { ParticleProps } from "../ParticleGenerator";
 
@@ -49,6 +50,7 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 	const [pulsing, setPulsing] = useState<boolean>(false);
 	const pulseClassName = pulsing ? "opacity-0 scale-200" : "opacity-100 scale-100";
 
+	const { showLimeCounter } = useLimeCountShownContext();
 	const [, setLimes] = useLimeCount();
 
 	useEffect(() => {
@@ -123,6 +125,7 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 	function clickLime() {
 		if (!animating) return;
 		setAnimating(false);
+		showLimeCounter();
 
 		// After lime reaches the center, perform a pulse
 		setTimeout(() => {

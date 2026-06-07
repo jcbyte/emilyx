@@ -6,7 +6,12 @@ export default function LimeCounter() {
 	const [limes] = useLimeCount();
 
 	return (
-		<div className="fixed top-2 right-2 flex bg-black/8 backdrop-blur-sm rounded-xl px-4 py-2 gap-2 shadow-lg border border-rose-200/50 max-w-md mx-auto items-center">
+		<motion.div
+			initial={{ opacity: 0.5, y: -40 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ type: "spring", stiffness: 300, damping: 20 }}
+			className="fixed top-2 right-2 flex bg-black/8 backdrop-blur-sm rounded-xl px-4 py-2 gap-2 shadow-lg border border-rose-200/50 max-w-md mx-auto items-center"
+		>
 			<div className="font-bold text-xl relative overflow-hidden h-7 min-w-[1.5rem] flex justify-center items-center">
 				<AnimatePresence mode="popLayout">
 					<motion.span
@@ -21,6 +26,6 @@ export default function LimeCounter() {
 				</AnimatePresence>
 			</div>
 			<img src={limeImg} className="h-6 w-6" />
-		</div>
+		</motion.div>
 	);
 }

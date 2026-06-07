@@ -7,6 +7,7 @@ import LimeCounter from "./components/LimeCounter";
 import ParticleGenerator from "./components/ParticleGenerator";
 import BubbleParticle from "./components/particles/BubbleParticle";
 import LimeParticle from "./components/particles/LimeParticle";
+import useLimeCountShownContext from "./hooks/useLimeCountShownContext";
 
 const BPM = 70;
 
@@ -25,6 +26,8 @@ export default function App() {
 	const [heartbeatsUntil, setHeartbeatsUntil] = useState<number>(0);
 	const together = useMemo(() => Math.floor(heartbeatsUntil) <= 0, [heartbeatsUntil]);
 	const [timeUntil, setTimeUntil] = useState<Time>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+	const { limeCounterShown } = useLimeCountShownContext();
 
 	// Load timestamp
 	useEffect(() => {
@@ -241,7 +244,7 @@ export default function App() {
 				)}
 			</div>
 
-			<LimeCounter />
+			{limeCounterShown && <LimeCounter />}
 			<ParticleGenerator Particle={LimeParticle} emissionRate={5500} delay={3500} />
 		</div>
 	);
