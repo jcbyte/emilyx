@@ -3,9 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { getNextEvent } from "./api";
 import Heart from "./assets/heart.svg?react";
-import BubbleParticle from "./components/BubbleParticle";
-import LimeParticle from "./components/LimeParticle";
+import LimeCounter from "./components/LimeCounter";
 import ParticleGenerator from "./components/ParticleGenerator";
+import BubbleParticle from "./components/particles/BubbleParticle";
+import LimeParticle from "./components/particles/LimeParticle";
 
 const BPM = 70;
 
@@ -240,6 +241,7 @@ export default function App() {
 				)}
 			</div>
 
+			<LimeCounter />
 			<ParticleGenerator Particle={LimeParticle} emissionRate={5500} delay={3500} />
 		</div>
 	);

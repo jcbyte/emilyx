@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { useMemo } from "react";
-import { randomInt } from "../tools";
-import type { ParticleProps } from "./ParticleGenerator";
+import { randomInt } from "../../tools";
+import type { ParticleProps } from "../ParticleGenerator";
 
 interface ParticleData {
 	size: number;

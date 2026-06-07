@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import limeImg from "../assets/lime.png";
-import { randomInt } from "../tools";
-import type { ParticleProps } from "./ParticleGenerator";
+import limeImg from "../../assets/lime.png";
+import { randomInt } from "../../tools";
+import type { ParticleProps } from "../ParticleGenerator";
 
 const edges = ["top", "bottom", "left", "right"] as const;
 type Edge = (typeof edges)[number];
