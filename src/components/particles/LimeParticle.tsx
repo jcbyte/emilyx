@@ -127,9 +127,11 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 		// After lime reaches the center, perform a pulse
 		setTimeout(() => {
 			setPulsing(true);
-			// Add to the lime counter (we've collected one)
-			setLimes((current) => current + 1);
 		}, pd.clickedTransitionDuration);
+		// Add to the lime counter (we've collected one), whilst pulsing
+		setTimeout(() => {
+			setLimes((current) => current + 1);
+		}, pd.clickedTransitionDuration * 1.5);
 		// After the pulse completes, remove lime
 		setTimeout(() => {
 			onDie();
