@@ -10,6 +10,7 @@ interface ParticleData {
 	size: number;
 	outDuration: number;
 	transitionDuration: number;
+	clickedTransitionDuration: number;
 	edge: Edge;
 	offset: number;
 	rotation: number;
@@ -21,6 +22,7 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 		const size = randomInt(60, 100);
 		const outDuration = randomInt(400, 1400);
 		const transitionDuration = 500;
+		const clickedTransitionDuration = 1000;
 		const edge = edges[randomInt(0, edges.length)];
 		const maxOffset = {
 			top: window.innerWidth,
@@ -36,7 +38,7 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 			right: randomInt(-90, -75),
 		}[edge];
 
-		return { size, outDuration, transitionDuration, edge, offset, rotation };
+		return { size, outDuration, transitionDuration, clickedTransitionDuration, edge, offset, rotation };
 	}, []);
 
 	const [animating, setAnimating] = useState<boolean>(true);
@@ -102,8 +104,8 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 				}[pd.edge],
 			}
 		: {
-				transitionDuration: `1s`,
-				rotate: `0deg`,
+				transitionDuration: `${pd.clickedTransitionDuration}ms`,
+				rotate: "0deg",
 				...{
 					top: { left: "50%" },
 					bottom: { left: "50%" },
@@ -116,20 +118,25 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 		if (!animating) return;
 		setAnimating(false);
 
-		// todo once lime has reached the center, do a single ping
-
-		// Remove the particle
+		// After lime reaches the center, perform a pulse
+		setTimeout(() => {
+			setPulsing(true);
+		}, pd.clickedTransitionDuration);
+		// After the pulse completes, remove lime
 		setTimeout(() => {
 			onDie();
-		}, 2000);
+		}, pd.clickedTransitionDuration * 2);
 	}
+
+	const [pulsing, setPulsing] = useState<boolean>(false);
+	const pulseClassName = pulsing ? "opacity-0 scale-200" : "opacity-100 scale-100";
 
 	return (
 		<img
 			src={limeImg}
 			alt="Lime"
 			onClick={clickLime}
-			className={`fixed transition-all ease-in-out ${className}`}
+			className={`fixed transition-all ease-in-out ${className} ${pulseClassName}`}
 			style={style}
 		/>
 	);
