@@ -24,7 +24,7 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 		const size = randomInt(60, 100);
 		const outDuration = randomInt(400, 1400);
 		const transitionDuration = 500;
-		const clickedTransitionDuration = 1000;
+		const clickedTransitionDuration = 700;
 		const edge = edges[randomInt(0, edges.length)];
 		const maxOffset = {
 			top: window.innerWidth,
@@ -43,7 +43,7 @@ export default function LimeParticle({ onDie }: ParticleProps) {
 		return { size, outDuration, transitionDuration, clickedTransitionDuration, edge, offset, rotation };
 	}, []);
 
-	const [particleCreatedTime] = useState<number>(performance.now());
+	const [particleCreatedTime] = useState<number>(() => performance.now());
 
 	const [out, setOut] = useState<boolean>(false);
 	const [animating, setAnimating] = useState<boolean>(true);
